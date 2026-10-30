@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aplikasi Cetak Dokumen</title>
+  <style>
+    /* Palet: tinta hitam di kertas putih, meja abu muda. Tema tetap karena
+       metaforanya kertas cetak; mode gelap akan merusak metafora itu. */
+    :root {
+      --ink: #000;
+      --paper: #fff;
+      --desk: #e6e6e6;
+      --faint: #555; /* 7.5:1 di atas putih */
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 32px 16px; min-height: 100vh;
+      background: var(--desk); color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif; line-height: 1.5;
+    }
+
+    /* Satu lembar nota. Bayangan tipis hanya untuk menunjukkan kertas di atas meja. */
+    .sheet {
+      max-width: 720px; margin: 0 auto; padding: 28px 32px 0;
+      background: var(--paper); border: 1px solid var(--ink);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, .25);
+    }
+
+    /* Garis ganda khas kepala nota */
+    header { position: relative; padding-bottom: 24px; border-bottom: 1px solid var(--ink); }
+    header::after { content: ""; position: absolute; left: 0; right: 0; bottom: 3px; border-bottom: 3px solid var(--ink); }
+    .sr { position: absolute; left: -9999px; }
+    h1 { margin: 0; font-size: clamp(30px, 7vw, 44px); line-height: 1.05; font-weight: 700; }
+    .lead { margin: 10px 0 0; max-width: 440px; font-size: 16px; }
+
+    /* Tabel nota: garis tegak, tulisan isian memakai huruf mesin ketik */
+    table { width: 100%; margin-top: 28px; border-collapse: collapse; border: 1.5px solid var(--ink); }
+    th, td { padding: 10px 12px; text-align: left; vertical-align: top; border-left: 1px solid var(--ink); }
+    th:first-child, td:first-child { border-left: 0; }
+    th { font-size: 14px; font-weight: 700; border-bottom: 1.5px solid var(--ink); }
+    td { border-bottom: 1px dotted var(--ink); }
+    tr:last-child td { border-bottom: 0; }
+    .no { width: 48px; text-align: center; }
+    .size { width: 130px; }
+    .act { width: 156px; }
+
+    .typed { font-family: "Courier New", Courier, monospace; }
+    .name { display: block; font-size: 18px; font-weight: 700; font-family: "Courier New", Courier, monospace; }
+    .desc { display: block; margin-top: 2px; font-size: 14px; color: var(--faint); }
+
+    .open {
+      display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 18px;
+      background: var(--ink); color: var(--paper); border: 1.5px solid var(--ink);
+      font: 700 15px Georgia, "Times New Roman", serif; text-decoration: none; white-space: nowrap;
+    }
+    .open:hover { background: var(--paper); color: var(--ink); }
+    .open:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+    tr.blank td { height: 52px; }
+    .note { margin: 10px 0 0; font-size: 14px; color: var(--faint); }
+
+    /* Sobekan di bawah kertas */
+    .stub { margin: 40px -32px 0; padding: 18px 32px 22px; border-top: 2px dashed var(--ink); font-size: 14px; }
+    .stub b { font-weight: 700; }
+
+    @media (max-width: 600px) {
+      body { padding: 16px 12px; }
+      .sheet { padding: 20px 16px 0; }
+      .stub { margin: 32px -16px 0; padding: 16px; }
+      thead { position: absolute; left: -9999px; }
+      table, tbody { display: block; }
+      tr { display: grid; grid-template-columns: 40px 1fr; border-bottom: 1px dotted var(--ink); }
+      tr:last-child { border-bottom: 0; }
+      td { border-left: 0; border-bottom: 0; }
+      td.no { grid-row: span 3; border-right: 1px solid var(--ink); padding-left: 0; padding-right: 0; }
+      td.size { width: auto; padding-bottom: 0; }
+      td.act { width: auto; grid-column: 2; padding-top: 6px; padding-bottom: 14px; }
+      td.size::before { content: "Ukuran: "; font-family: Georgia, serif; }
+      tr.blank { grid-template-columns: 1fr; }
+      tr.blank td { height: 44px; border-right: 0; }
+      tr.blank td:not(:first-child) { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <header>
+      <h1>Aplikasi Cetak Dokumen</h1>
+      <p class="lead">Pilih dokumen, isi formnya, lihat hasilnya di layar, lalu cetak di kertas yang kamu punya.</p>
+    </header>
+
+    <main>
+      <table>
+        <thead>
+          <tr>
+            <th class="no">No.</th>
+            <th>Dokumen</th>
+            <th class="size">Ukuran kertas</th>
+            <th class="act"><span class="sr">Buka</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="no typed">1</td>
+            <td>
+              <span class="name">Invoice</span>
+              <span class="desc">Purchase Order atau invoice, dengan tabel barang, total otomatis, dan dua kolom tanda tangan.</span>
+            </td>
+            <td class="size typed">A5, A4</td>
+            <td class="act"><a class="open" href="invoice/">Buat invoice</a></td>
+          </tr>
+          <tr>
+            <td class="no typed">2</td>
+            <td>
+              <span class="name">Slip Gaji</span>
+              <span class="desc">Pendapatan, potongan, BPJS otomatis, gaji bersih dengan terbilang, dan tanda tangan.</span>
+            </td>
+            <td class="size typed">A4, NCR 215 × 137</td>
+            <td class="act"><a class="open" href="Slip%20Gaji%20Generator/">Buat slip gaji</a></td>
+          </tr>
+          <tr class="blank" aria-hidden="true"><td class="no"></td><td></td><td class="size"></td><td class="act"></td></tr>
+          <tr class="blank" aria-hidden="true"><td class="no"></td><td></td><td class="size"></td><td class="act"></td></tr>
+        </tbody>
+      </table>
+      <p class="note">Baris kosong disiapkan untuk dokumen berikutnya.</p>
+    </main>
+
+    <footer class="stub">
+      <b>Data tetap di perangkatmu.</b> Isian form disimpan di browser ini dan tidak dikirim ke server mana pun.
+    </footer>
+  </div>
+</body>
+</html>

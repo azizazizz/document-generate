@@ -1,0 +1,218 @@
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #e9e9ee;
+  color: #222;
+}
+
+/* ================= APP LAYOUT ================= */
+.app { display: flex; min-height: 100vh; }
+
+.panel {
+  width: 430px;
+  flex-shrink: 0;
+  padding: 18px;
+  background: #fff;
+  border-right: 1px solid #d5d5dc;
+  height: 100vh;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+}
+.panel h1 { margin: 0 0 4px; font-size: 20px; }
+.hint { margin: 0 0 14px; color: #666; font-size: 13px; }
+.hint.small { font-size: 12px; margin: 8px 0 0; }
+
+fieldset { border: 1px solid #d5d5dc; border-radius: 8px; margin: 0 0 14px; padding: 10px 12px 12px; }
+legend { font-weight: 600; font-size: 13px; padding: 0 6px; }
+
+label { display: block; font-size: 12px; color: #555; margin-top: 8px; }
+label.check { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #222; }
+label.check.indent { margin-top: 4px; padding-left: 18px; }
+.sub { margin-top: 10px; font-size: 12px; color: #555; font-weight: 600; }
+input[type="text"], input[type="date"], input[type="number"], input[type="file"],
+textarea, select {
+  width: 100%;
+  margin-top: 3px;
+  padding: 7px 8px;
+  font: inherit;
+  font-size: 14px;
+  border: 1px solid #c4c4cc;
+  border-radius: 6px;
+  background: #fff;
+}
+textarea { resize: vertical; }
+.row { display: flex; gap: 8px; }
+.row > label { flex: 1; min-width: 0; }
+
+button {
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 12px;
+  border: 1px solid #c4c4cc;
+  border-radius: 6px;
+  background: #f5f5f8;
+  cursor: pointer;
+}
+button:hover { background: #ebebf0; }
+button.primary { background: #d6336c; border-color: #d6336c; color: #fff; font-weight: 600; }
+button.primary:hover { background: #b82a5b; }
+button.link { border: 0; background: none; color: #d6336c; padding: 4px 0; font-size: 12px; }
+.actions { display: flex; gap: 8px; }
+.actions .primary { flex: 1; }
+.actions.spaced { margin-top: 10px; }
+
+/* item rows in form */
+.item-row { display: grid; grid-template-columns: 1fr 46px 58px 90px 24px; gap: 6px; margin-bottom: 6px; align-items: center; }
+.item-row input { margin-top: 0; padding: 6px; }
+.item-row .del { padding: 4px 0; color: #c0392b; }
+.item-head { font-size: 11px; color: #777; margin-bottom: 3px; }
+#addItem { margin-top: 4px; }
+
+/* ================= PREVIEW ================= */
+.preview {
+  flex: 1;
+  padding: 24px 12px;
+  overflow: auto;
+}
+.warn {
+  max-width: 560px;
+  margin: 0 auto 12px;
+  padding: 8px 12px;
+  background: #fff3cd;
+  border: 1px solid #ffda6a;
+  border-radius: 6px;
+  font-size: 13px;
+}
+#zoomBox { display: flex; justify-content: center; }
+
+/* ================= LEMBAR (A5 / A4) =================
+   Semua ukuran memakai --mm dan --pt supaya bisa diskalakan lewat --k
+   (A5 = 1, A4 = lebih besar). */
+.sheet {
+  --k: 1;
+  --w: 148mm;
+  --h: 210mm;
+  --mm: calc(1mm * var(--k));
+  --pt: calc(1pt * var(--k));
+  width: var(--w);
+  height: var(--h);
+  /* margin isi per sisi, dalam mm nyata (tidak ikut --k), diatur dari form */
+  padding: calc(var(--mt, 9) * 1mm) calc(var(--mr, 9) * 1mm) calc(var(--mb, 9) * 1mm) calc(var(--ml, 9) * 1mm);
+  background: #fff;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, .25);
+  color: #000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: calc(9 * var(--pt));
+  line-height: 1.25;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.sheet.landscape { --w: 210mm; --h: 148mm; }
+.sheet.a4 { --k: 1.2; --w: 210mm; --h: 297mm; }
+.sheet.a4.landscape { --w: 297mm; --h: 210mm; }
+.sheet.pink { background: #ffd9e4; }
+
+.sheet.border { border: 0.3mm solid #000; }
+
+/* header */
+.s-head { display: flex; justify-content: space-between; gap: calc(8 * var(--mm)); padding-bottom: calc(4 * var(--mm)); border-bottom: 0.4mm solid #000; }
+.s-brand { display: flex; gap: calc(4 * var(--mm)); align-items: center; min-width: 0; }
+.s-logo { max-width: calc(22 * var(--mm)); max-height: calc(18 * var(--mm)); object-fit: contain; }
+.s-company { font-size: calc(12 * var(--pt)); font-weight: 700; margin-bottom: calc(0.8 * var(--mm)); }
+.s-address { font-size: calc(7.5 * var(--pt)); line-height: 1.4; white-space: pre-line; }
+.s-doc { text-align: right; flex-shrink: 0; }
+.s-title { font-size: calc(13 * var(--pt)); font-weight: 700; letter-spacing: .3pt; margin-bottom: calc(2 * var(--mm)); }
+.s-doc table { margin-left: auto; font-size: calc(8.5 * var(--pt)); border-collapse: collapse; }
+.s-doc td { padding: calc(0.9 * var(--mm)) 0 calc(0.9 * var(--mm)) calc(2 * var(--mm)); text-align: left; }
+.s-doc td:first-child { padding-left: 0; padding-right: calc(3 * var(--mm)); }
+
+/* info penerima */
+.s-to { margin: calc(4.5 * var(--mm)) 0; font-size: calc(8.5 * var(--pt)); }
+.s-to .lbl { font-size: calc(7.5 * var(--pt)); margin-bottom: calc(0.6 * var(--mm)); }
+.s-to .name { font-weight: 700; font-size: calc(10 * var(--pt)); margin-bottom: calc(0.6 * var(--mm)); }
+.s-to .addr { white-space: pre-line; line-height: 1.4; }
+.s-to .space { height: calc(18 * var(--mm)); }
+.sheet.landscape .s-to .space { height: calc(9 * var(--mm)); }
+
+/* garis kosong untuk tulisan tangan */
+.fill { display: inline-block; min-width: calc(36 * var(--mm)); height: 1.2em; border-bottom: 0.25mm solid #000; vertical-align: bottom; }
+.fill.short { min-width: calc(24 * var(--mm)); }
+.fill.block { display: block; min-width: 0; height: calc(6 * var(--mm)); }
+
+/* tabel barang */
+/* flex: 1 membuat tabel mengisi sisa tinggi kertas, jadi tidak ada ruang kosong di antara tabel dan total */
+.s-table { width: 100%; flex: 1 1 auto; border-collapse: collapse; font-size: calc(8.5 * var(--pt)); }
+.s-table thead tr { height: 0; }
+.s-table.compact { flex: 0 0 auto; }
+.s-table th { text-align: center; padding: calc(1.8 * var(--mm)) calc(2 * var(--mm)); border-top: 0.3mm solid #000; border-bottom: 0.3mm solid #000; }
+.s-table th.name, .s-table td.name { text-align: center; }
+.s-table th.price, .s-table th.sum { text-align: right; }
+.s-table td { height: calc(6 * var(--mm)); padding: 0 calc(2 * var(--mm)); vertical-align: middle; }
+.s-table .no { width: calc(8 * var(--mm)); text-align: center; }
+.s-table .qty { width: calc(13 * var(--mm)); text-align: center; }
+.s-table .unit { width: calc(16 * var(--mm)); text-align: center; }
+.s-table .price { width: calc(31 * var(--mm)); text-align: right; }
+.s-table .sum { width: calc(28 * var(--mm)); text-align: right; }
+.s-table td.name { overflow-wrap: anywhere; }
+.sheet.landscape .s-table td { height: calc(5.2 * var(--mm)); }
+.sheet.border .s-table td, .sheet.border .s-table th { border: 0.2mm solid #000; }
+.sheet:not(.border) .s-table tbody tr { border-bottom: 0.15mm dotted #888; }
+
+/* footer: catatan (kiri) + total & tanda tangan (kanan) */
+.s-foot { margin-top: auto; display: flex; justify-content: space-between; gap: calc(8 * var(--mm)); padding-top: calc(5 * var(--mm)); }
+.s-left { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: calc(6 * var(--mm)); }
+.s-note { font-size: calc(8 * var(--pt)); line-height: 1.4; white-space: pre-line; }
+.s-note b { display: block; margin-bottom: calc(1 * var(--mm)); }
+.s-right { width: calc(80 * var(--mm)); flex-shrink: 0; }
+
+.s-total { width: 100%; border-collapse: collapse; font-size: calc(9 * var(--pt)); }
+.s-total td { padding: calc(1.3 * var(--mm)) calc(2 * var(--mm)); }
+.s-total td:last-child { text-align: right; font-weight: 700; }
+.s-total .fill.short { min-width: calc(44 * var(--mm)); }
+.s-total.only td { border-top: 0.3mm solid #000; border-bottom: 0.3mm solid #000; font-weight: 700; }
+.s-total tr.grand td { border-top: 0.3mm solid #000; border-bottom: 0.3mm solid #000; font-size: calc(10.5 * var(--pt)); font-weight: 700; }
+
+.s-sign { width: calc(62 * var(--mm)); margin: calc(6 * var(--mm)) 0 0 auto; text-align: center; font-size: calc(8.5 * var(--pt)); }
+.s-sign.s-recv { width: 100%; max-width: calc(46 * var(--mm)); margin: 0; }
+.s-sign .space { height: calc(21 * var(--mm)); }
+.sheet.landscape .s-sign .space { height: calc(15 * var(--mm)); }
+.s-sign .line { border-top: 0.3mm solid #000; padding-top: calc(1.2 * var(--mm)); min-height: calc(5 * var(--mm)); font-weight: 600; }
+
+/* ================= LEMBAR UJI POSISI ================= */
+.sheet.test { padding: 0; position: relative; display: block; }
+.t-frame { position: absolute; inset: 0; border: 0.5mm solid #000; }
+.t-frame.in { inset: 5mm; border: 0.3mm dashed #000; }
+.t-x, .t-y { position: absolute; font-size: 7pt; line-height: 1; }
+.t-x { top: 6mm; transform: translateX(-50%); }
+.t-y { left: 6mm; transform: translateY(-50%); }
+.t-c { position: absolute; font-size: 20pt; line-height: 1; }
+.t-c.tl { top: 12mm; left: 12mm; }
+.t-c.tr { top: 12mm; right: 12mm; }
+.t-c.bl { bottom: 12mm; left: 12mm; }
+.t-c.br { bottom: 12mm; right: 12mm; }
+.t-info { position: absolute; left: 22mm; right: 22mm; top: 50%; transform: translateY(-50%); text-align: center; font-size: 9pt; line-height: 1.5; }
+
+/* ================= PRINT ================= */
+@media print {
+  html, body { background: none; height: auto; margin: 0; }
+  .no-print { display: none !important; }
+  .app { display: block; min-height: 0; }
+  .preview { padding: 0; overflow: visible; }
+  #zoomBox { display: block; zoom: 1 !important; }
+  .sheet {
+    box-shadow: none;
+    background: none !important;   /* warna kertas = kertas aslinya */
+    margin: 0;
+    /* 0.5mm lebih pendek dari halaman supaya tidak memicu halaman kedua yang kosong */
+    height: calc(var(--h) - 0.5mm);
+    break-after: avoid;
+    transform-origin: 0 0;
+    transform: translate(calc(var(--ox, 0) * 1mm), calc(var(--oy, 0) * 1mm)) scale(var(--ps, 1));
+  }
+}

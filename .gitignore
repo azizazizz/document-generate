@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+
+# Claude Code
+.claude/
+
+# Node (jika nanti ditambah tooling)
+node_modules/
+
+# Data gaji asli hasil "Simpan Data" (jangan ikut ke repo / hosting)
+Slip Gaji Generator/data/
+
+# Markdown
+CLAUDE.md
+DESIGN.md

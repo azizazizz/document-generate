@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Generator Invoice A5 / A4</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- ============ FORM ============ -->
+    <aside class="panel no-print">
+      <h1>Generator Invoice</h1>
+      <p class="hint">Isi data di bawah, preview di kanan langsung berubah. Pilih ukuran kertas (A5 / A4) di bagian <b>Kertas</b>, lalu klik <b>Cetak</b>.</p>
+
+      <fieldset>
+        <legend>Kop / Perusahaan</legend>
+        <label>Logo
+          <input type="file" id="logoFile" accept="image/*">
+        </label>
+        <button type="button" id="removeLogo" class="link">Hapus logo</button>
+        <label>Nama perusahaan
+          <input data-key="company" type="text">
+        </label>
+        <label>Alamat / kontak
+          <textarea data-key="address" rows="2"></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Dokumen</legend>
+        <label>Judul dokumen
+          <input data-key="title" type="text">
+        </label>
+        <div class="row">
+          <label>Nomor invoice
+            <input data-key="invoiceNo" type="text">
+          </label>
+          <label>Tanggal
+            <input data-key="date" type="date">
+          </label>
+        </div>
+        <label>Nama (kepada / supplier)
+          <input data-key="customer" type="text" placeholder="Nama penerima / supplier">
+        </label>
+        <label>Alamat
+          <textarea data-key="customerAddr" rows="2"></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Barang</legend>
+        <div id="itemList"></div>
+        <button type="button" id="addItem">+ Tambah barang</button>
+        <label class="check"><input data-key="showSpare" type="checkbox"> Tambah baris kosong di bawah barang (untuk tulisan tangan)</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Hilangkan rupiah</legend>
+        <p class="hint small">Kolom yang dicentang dihapus dari kertas (bukan dikosongkan), jadi kolom lain melebar. Cocok untuk dokumen tanpa harga.</p>
+        <label class="check"><input data-key="hidePrice" type="checkbox"> Kolom Harga</label>
+        <label class="check"><input data-key="hideSum" type="checkbox"> Kolom Jumlah</label>
+        <label class="check"><input data-key="hideGrand" type="checkbox"> Baris TOTAL Rp</label>
+        <div class="actions spaced">
+          <button type="button" id="hideMoneyAll">Hilangkan semua</button>
+          <button type="button" id="hideMoneyNone">Tampilkan semua</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Catatan &amp; tanda tangan</legend>
+        <label>Catatan
+          <textarea data-key="note" rows="2"></textarea>
+        </label>
+        <div class="sub">Yang Memberi (kanan)</div>
+        <div class="row">
+          <label>Teks di atas tanda tangan
+            <input data-key="signLabel" type="text">
+          </label>
+          <label>Nama pemberi
+            <input data-key="signer" type="text" placeholder="(kosongkan jika tanda tangan basah)">
+          </label>
+        </div>
+        <div class="sub">Penerima (kiri)</div>
+        <label class="check"><input data-key="showReceiver" type="checkbox"> Tampilkan kolom "Penerima"</label>
+        <div class="row">
+          <label>Teks di atas tanda tangan
+            <input data-key="receiverLabel" type="text">
+          </label>
+          <label>Nama penerima
+            <input data-key="receiver" type="text" placeholder="(kosongkan jika tanda tangan basah)">
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Kosongkan (isi pakai pulpen)</legend>
+        <p class="hint small">Bagian yang dicentang dicetak sebagai garis kosong, nanti ditulis tangan di kertas.</p>
+        <label class="check"><input data-key="blankInvoiceNo" type="checkbox"> Nomor invoice</label>
+        <label class="check"><input data-key="blankDate" type="checkbox"> Tanggal</label>
+        <label class="check"><input data-key="blankCustomer" type="checkbox"> Nama &amp; alamat penerima (ruang kosong, tanpa garis)</label>
+        <label class="check"><input data-key="hideToLabel" type="checkbox"> Hilangkan tulisan "Kepada Yth."</label>
+        <div class="sub">Kolom tabel barang</div>
+        <label class="check indent"><input data-key="blankName" type="checkbox"> Nama barang</label>
+        <label class="check indent"><input data-key="blankQty" type="checkbox"> Qty</label>
+        <label class="check indent"><input data-key="blankUnit" type="checkbox"> Satuan</label>
+        <label class="check indent"><input data-key="blankPrice" type="checkbox"> Harga</label>
+        <label class="check indent"><input data-key="blankSum" type="checkbox"> Jumlah</label>
+        <label class="check"><input data-key="blankTotal" type="checkbox"> Total barang &amp; total harga</label>
+        <label class="check"><input data-key="blankNote" type="checkbox"> Catatan</label>
+        <div class="actions spaced">
+          <button type="button" id="blankAll">Kosongkan semua</button>
+          <button type="button" id="blankNone">Isi semua</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Kertas</legend>
+        <label>Ukuran kertas
+          <select data-key="size">
+            <option value="ncr">Kertas NCR pink &amp; putih (137 × 215 mm)</option>
+            <option value="a5">A5 (148 × 210 mm)</option>
+            <option value="a4">A4 (210 × 297 mm)</option>
+            <option value="custom">Ukuran lain (isi sendiri)</option>
+          </select>
+        </label>
+        <div class="row" id="customSize" hidden>
+          <label>Lebar (mm)
+            <input data-key="customW" type="number" min="50" max="500" step="1">
+          </label>
+          <label>Tinggi (mm)
+            <input data-key="customH" type="number" min="50" max="500" step="1">
+          </label>
+        </div>
+        <div class="row">
+          <label>Orientasi
+            <select data-key="orientation">
+              <option value="portrait">Portrait</option>
+              <option value="landscape">Landscape</option>
+            </select>
+          </label>
+          <label>Warna preview
+            <select data-key="paper">
+              <option value="white">Putih</option>
+              <option value="pink">Pink</option>
+            </select>
+          </label>
+        </div>
+        <div class="sub">Margin isi (mm)</div>
+        <div class="row">
+          <label>Atas
+            <input data-key="mT" type="number" min="0" max="60" step="0.5">
+          </label>
+          <label>Bawah
+            <input data-key="mB" type="number" min="0" max="60" step="0.5">
+          </label>
+        </div>
+        <div class="row">
+          <label>Kiri
+            <input data-key="mL" type="number" min="0" max="60" step="0.5">
+          </label>
+          <label>Kanan
+            <input data-key="mR" type="number" min="0" max="60" step="0.5">
+          </label>
+        </div>
+        <p class="hint small">Perbesar margin di sisi kertas yang berlubang (perforasi) supaya tulisan tidak mengenai lubang. Perkecil di sisi yang masih kosong.</p>
+        <label class="check">
+          <input data-key="border" type="checkbox"> Cetak garis tabel &amp; bingkai
+        </label>
+        <p class="hint small">Warna preview tidak ikut tercetak. Yang tercetak hanya tinta hitam, jadi cocok untuk kertas NCR pink/putih.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Penyesuaian cetak</legend>
+        <p class="hint small">Pakai kalau hasil cetak terpotong. Hanya berlaku saat dicetak, preview tidak berubah.</p>
+        <div class="row">
+          <label>Skala (%)
+            <input data-key="scale" type="number" min="30" max="120" step="1">
+          </label>
+          <label>Geser kanan (mm)
+            <input data-key="offsetX" type="number" min="-50" max="50" step="0.5">
+          </label>
+          <label>Geser bawah (mm)
+            <input data-key="offsetY" type="number" min="-50" max="50" step="0.5">
+          </label>
+        </div>
+        <p class="hint small">Angka negatif menggeser ke kiri atau ke atas.</p>
+        <label class="check"><input data-key="lockPage" type="checkbox"> Kunci halaman sesuai pilihan Kertas &amp; Orientasi</label>
+        <p class="hint small">Biarkan mati supaya Layout dan Paper size di dialog print bisa kamu pilih sendiri. Nyalakan hanya kalau printer dan browsermu mengikuti ukuran dari aplikasi.</p>
+        <button type="button" id="testBtn">Cetak uji posisi</button>
+      </fieldset>
+
+      <p class="hint small" id="printHint"></p>
+      <div class="actions">
+        <button type="button" id="printBtn" class="primary">Cetak</button>
+        <button type="button" id="newBtn">Dokumen baru</button>
+      </div>
+    </aside>
+
+    <!-- ============ PREVIEW ============ -->
+    <main class="preview" id="previewArea">
+      <div id="overflowWarn" class="warn no-print" hidden>Isi melebihi 1 halaman. Kurangi jumlah barang atau catatan.</div>
+      <div id="zoomBox">
+        <section class="sheet" id="sheet"></section>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

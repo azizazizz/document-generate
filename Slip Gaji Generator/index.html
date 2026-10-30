@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slip Gaji Generator</title>
+<link rel="stylesheet" href="style.css">
+<style id="pageStyle"></style>
+</head>
+<body>
+<header class="topbar no-print">
+  <h1>Slip Gaji Generator</h1>
+  <div class="actions">
+    <label class="paper">Kertas
+      <select id="paper">
+        <option value="A4">A4 (HVS, tegak)</option>
+        <option value="A5">A5 (NCR, mendatar)</option>
+      </select>
+    </label>
+    <button type="button" id="btnReset" class="btn ghost">Reset</button>
+    <button type="button" id="btnSave" class="btn ghost">Simpan Data (.json)</button>
+    <label class="btn ghost">Muat Data<input type="file" id="fileLoad" accept=".json" hidden></label>
+    <button type="button" id="btnPrint" class="btn primary">Cetak / Simpan PDF</button>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="panel no-print" id="form">
+    <fieldset id="a5size" hidden>
+      <legend>Ukuran Kertas A5 (NCR)</legend>
+      <div class="grid2">
+        <label>Lebar (mm)<input id="a5w" type="number" min="100" max="300" step="0.5"></label>
+        <label>Tinggi (mm)<input id="a5h" type="number" min="80" max="300" step="0.5"></label>
+        <label>Margin kiri (mm)<input id="a5ml" type="number" min="0" max="80" step="0.5"></label>
+        <label>Margin kanan (mm)<input id="a5mr" type="number" min="0" max="80" step="0.5"></label>
+      </div>
+      <p class="hint">Jika hasil cetak terpotong di kanan, naikkan Margin kanan; jika terpotong di kiri, naikkan Margin kiri. Samakan Lebar/Tinggi dengan ukuran kertas di printer. Contoh: 215 × 137 (21,5 × 13,7 cm) atau 210 × 148 (A5 mendatar bawaan).</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Perusahaan</legend>
+      <label>Alamat<textarea id="coAddress" rows="2" placeholder="Jl. Merdeka No. 1, Jakarta"></textarea></label>
+      <label>Logo (opsional)<input id="coLogo" type="file" accept="image/*"></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Karyawan</legend>
+      <div class="grid2">
+        <label>Nama<input id="empName" type="text"></label>
+        <label>NIK / ID Karyawan<input id="empId" type="text"></label>
+        <label>Jabatan<input id="empPosition" type="text"></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Periode &amp; Pembayaran</legend>
+      <div class="grid2">
+        <label>Bulan<select id="month"></select></label>
+        <label>Tahun<input id="year" type="number" min="2000" max="2100"></label>
+        <label>Tanggal Pembayaran<input id="payDate" type="date"></label>
+        <label>Metode<input id="payMethod" type="text" placeholder="Transfer Bank BCA"></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Pendapatan</legend>
+      <div id="earnings" class="rows"></div>
+      <button type="button" class="btn small" data-add="earnings">+ Tambah Pendapatan</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>Potongan</legend>
+      <label class="check"><input id="autoBpjs" type="checkbox"> Hitung otomatis BPJS (Kesehatan 1%, JHT 2%, JP 1%)</label>
+      <div class="grid2 bpjs-cap">
+        <label>Batas upah BPJS Kesehatan (Rp)<input id="capKes" type="number" min="0" value="12000000"></label>
+        <label>Batas upah BPJS JP (Rp)<input id="capJp" type="number" min="0" value="10547400"></label>
+      </div>
+      <div id="deductions" class="rows"></div>
+      <button type="button" class="btn small" data-add="deductions">+ Tambah Potongan</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>Catatan</legend>
+      <label>Catatan di slip<textarea id="notes" rows="2" placeholder="Slip ini dibuat otomatis dan sah tanpa tanda tangan."></textarea></label>
+      <label>Nama Penandatangan (HRD / Keuangan)<input id="signer" type="text"></label>
+      <label>Jabatan Penandatangan<input id="signerPos" type="text" placeholder="HRD Manager"></label>
+    </fieldset>
+  </section>
+
+  <section class="preview-wrap">
+    <p id="warn" class="warn no-print" hidden>Isi slip melebihi tinggi kertas A5 (13,7 cm) dan akan terpotong. Kurangi baris pendapatan/potongan atau persingkat catatan.</p>
+    <article class="slip" id="slip">
+      <header class="slip-head">
+        <img id="pLogo" alt="" hidden>
+        <div class="co">
+          <p id="pCoAddress"></p>
+        </div>
+        <div class="title">
+          <h3>SLIP GAJI</h3>
+          <p id="pPeriod"></p>
+        </div>
+      </header>
+
+      <div class="emp">
+        <dl>
+          <div><dt>Nama</dt><dd id="pEmpName"></dd></div>
+          <div><dt>NIK</dt><dd id="pEmpId"></dd></div>
+          <div><dt>Jabatan</dt><dd id="pEmpPosition"></dd></div>
+        </dl>
+        <dl>
+          <div><dt>Tgl. Bayar</dt><dd id="pPayDate"></dd></div>
+          <div><dt>Metode</dt><dd id="pPayMethod"></dd></div>
+        </dl>
+      </div>
+
+      <div class="tables">
+        <table>
+          <thead><tr><th colspan="2">PENDAPATAN</th></tr></thead>
+          <tbody id="pEarnings"></tbody>
+          <tfoot><tr><td>Total Pendapatan</td><td class="num" id="pTotalEarn"></td></tr></tfoot>
+        </table>
+        <table>
+          <thead><tr><th colspan="2">POTONGAN</th></tr></thead>
+          <tbody id="pDeductions"></tbody>
+          <tfoot><tr><td>Total Potongan</td><td class="num" id="pTotalDed"></td></tr></tfoot>
+        </table>
+      </div>
+
+      <div class="net">
+        <div class="net-row"><span>GAJI BERSIH (TAKE HOME PAY)</span><strong id="pNet"></strong></div>
+        <p class="words" id="pWords"></p>
+      </div>
+
+      <p class="notes" id="pNotes"></p>
+
+      <footer class="sign">
+        <div>
+          <p>Diterima oleh,</p>
+          <div class="line"></div>
+          <p id="pSignEmp"></p>
+        </div>
+        <div>
+          <p id="pSignDate"></p>
+          <div class="line"></div>
+          <p><strong id="pSigner"></strong><br><span id="pSignerPos"></span></p>
+        </div>
+      </footer>
+    </article>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
