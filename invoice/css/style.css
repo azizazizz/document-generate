@@ -22,6 +22,13 @@ body {
   position: sticky;
   top: 0;
 }
+.back {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; margin-bottom: 8px;
+  border: 1px solid #c4c4cc; border-radius: 6px; background: #f5f5f8;
+  color: #222; font-size: 14px; text-decoration: none;
+}
+.back:hover { background: #ebebf0; }
+.back:focus-visible { outline: 2px solid #d6336c; outline-offset: 2px; }
 .panel h1 { margin: 0 0 4px; font-size: 20px; }
 .hint { margin: 0 0 14px; color: #666; font-size: 13px; }
 .hint.small { font-size: 12px; margin: 8px 0 0; }
@@ -71,6 +78,21 @@ button.link { border: 0; background: none; color: #d6336c; padding: 4px 0; font-
 .item-row .del { padding: 4px 0; color: #c0392b; }
 .item-head { font-size: 11px; color: #777; margin-bottom: 3px; }
 #addItem { margin-top: 4px; }
+
+/* ================= LAYAR SEMPIT (HP / tablet) =================
+   Form di atas, preview kertas di bawah. Preview mengecil sendiri lewat fitPreview(). */
+@media (max-width: 900px) {
+  .app { flex-direction: column; }
+  .panel { width: 100%; height: auto; position: static; overflow: visible; border-right: 0; border-bottom: 1px solid #d5d5dc; }
+  .preview { padding: 16px 8px; }
+  /* nama barang satu baris penuh, qty / satuan / harga / hapus di baris bawahnya */
+  .item-head { display: none; }
+  .item-row { grid-template-columns: 64px 1fr 1.3fr 36px; }
+  .item-row > input:first-child { grid-column: 1 / -1; }
+  .item-row input { padding: 9px 8px; }
+  .item-row .del { padding: 8px 0; }
+  .actions button, button.primary { min-height: 44px; }
+}
 
 /* ================= PREVIEW ================= */
 .preview {

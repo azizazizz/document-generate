@@ -195,7 +195,17 @@
     const slip = $('slip');
     $('warn').hidden = !(state.paper === 'A5' && slip.scrollHeight > slip.clientHeight + 1);
     document.title = state.empName ? `Slip Gaji - ${state.empName} - ${MONTHS[state.month]} ${state.year}` : 'Slip Gaji Generator';
+    fitPreview();
   }
+
+  // Layar sempit: kecilkan preview kertas supaya muat tanpa geser ke samping. Cetak tidak terpengaruh (zoom dikembalikan di CSS print).
+  function fitPreview() {
+    const slip = $('slip');
+    slip.style.zoom = '';
+    const avail = slip.parentElement.clientWidth;
+    if (slip.offsetWidth > avail) slip.style.zoom = avail / slip.offsetWidth;
+  }
+  window.addEventListener('resize', fitPreview);
 
   function update(amountEdit) {
     if (amountEdit) refreshAutoRows();

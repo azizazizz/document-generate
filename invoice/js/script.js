@@ -232,11 +232,11 @@ function renderItemForm() {
     const row = document.createElement("div");
     row.className = "item-row";
     row.innerHTML = `
-      <input type="text" placeholder="Nama barang" value="${esc(item.name)}">
-      <input type="number" min="0" step="any" value="${item.qty}">
-      <input type="text" placeholder="pcs" value="${esc(item.unit)}">
-      <input type="text" inputmode="numeric" autocomplete="off" placeholder="0" value="${item.price ? num(item.price) : ""}">
-      <button type="button" class="del" title="Hapus">✕</button>`;
+      <input type="text" aria-label="Nama barang" placeholder="Nama barang" value="${esc(item.name)}">
+      <input type="number" aria-label="Qty" min="0" step="any" value="${item.qty}">
+      <input type="text" aria-label="Satuan" placeholder="Satuan" value="${esc(item.unit)}">
+      <input type="text" aria-label="Harga" inputmode="numeric" autocomplete="off" placeholder="Harga" value="${item.price ? num(item.price) : ""}">
+      <button type="button" class="del" title="Hapus" aria-label="Hapus barang">✕</button>`;
 
     const [nameEl, qtyEl, unitEl, priceEl] = row.querySelectorAll("input");
     nameEl.addEventListener("input", () => { item.name = nameEl.value; render(); });
