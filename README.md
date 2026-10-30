@@ -27,10 +27,3 @@ Menambah aplikasi baru (misalnya `slip-gaji/`): buat folder sendiri berisi `inde
     ├── app.js
     └── data/           # file .json hasil "Simpan Data", berisi data gaji asli
 ```
-
-## Hosting
-
-Sepenuhnya statis, bisa langsung di-hosting tanpa build:
-
-- **GitHub Pages**: Settings → Pages → Source: branch `main`, folder `/ (root)`. Invoice ada di `/invoice/`.
-- **Netlify / Vercel / Cloudflare Pages**: arahkan ke folder ini, tanpa build command, publish directory `/`.
