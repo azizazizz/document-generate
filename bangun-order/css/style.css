@@ -1,0 +1,185 @@
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #e9e9ee;
+  color: #222;
+}
+
+/* ================= APP LAYOUT ================= */
+.app { display: flex; min-height: 100vh; }
+
+.panel {
+  width: 430px;
+  flex-shrink: 0;
+  padding: 18px;
+  background: #fff;
+  border-right: 1px solid #d5d5dc;
+  height: 100vh;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+}
+.back {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; margin-bottom: 8px;
+  border: 1px solid #c4c4cc; border-radius: 6px; background: #f5f5f8;
+  color: #222; font-size: 14px; text-decoration: none;
+}
+.back:hover { background: #ebebf0; }
+.back:focus-visible { outline: 2px solid #000; outline-offset: 2px; }
+.panel h1 { margin: 0 0 4px; font-size: 20px; }
+.hint { margin: 0 0 14px; color: #555; font-size: 13px; }
+.hint.small { font-size: 12px; margin: 8px 0 0; }
+
+fieldset { border: 1px solid #d5d5dc; border-radius: 8px; margin: 0 0 14px; padding: 10px 12px 12px; }
+legend { font-weight: 600; font-size: 13px; padding: 0 6px; }
+
+label { display: block; font-size: 12px; color: #555; margin-top: 8px; }
+label.check { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #222; }
+input[type="text"], input[type="date"], input[type="number"], input[type="file"],
+textarea, select {
+  width: 100%;
+  margin-top: 3px;
+  padding: 7px 8px;
+  font: inherit;
+  font-size: 14px;
+  border: 1px solid #c4c4cc;
+  border-radius: 6px;
+  background: #fff;
+}
+input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible {
+  outline: 2px solid #000; outline-offset: 1px;
+}
+textarea { resize: vertical; }
+.row { display: flex; gap: 8px; }
+.row > label { flex: 1; min-width: 0; }
+
+button {
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 12px;
+  border: 1px solid #c4c4cc;
+  border-radius: 6px;
+  background: #f5f5f8;
+  cursor: pointer;
+}
+button:hover { background: #ebebf0; }
+button.primary { background: #111; border-color: #111; color: #fff; font-weight: 600; }
+button.primary:hover { background: #333; }
+button.link { border: 0; background: none; color: #111; text-decoration: underline; padding: 4px 0; font-size: 12px; }
+.actions { display: flex; gap: 8px; }
+.actions .primary { flex: 1; }
+
+/* ================= PREVIEW ================= */
+.preview { flex: 1; padding: 24px 12px; overflow: auto; }
+.warn {
+  max-width: 560px;
+  margin: 0 auto 12px;
+  padding: 8px 12px;
+  background: #fff3cd;
+  border: 1px solid #ffda6a;
+  border-radius: 6px;
+  font-size: 13px;
+}
+#zoomBox { display: flex; justify-content: center; }
+#sheets { display: flex; flex-direction: column; gap: 18px; align-items: center; }
+
+/* ================= LEMBAR =================
+   Ukuran memakai --mm dan --pt supaya skala kertas (A4 = 1, A5 lebih kecil) cukup lewat --k. */
+.sheet {
+  --k: 1;
+  --w: 210mm;
+  --h: 297mm;
+  --mm: calc(1mm * var(--k));
+  --pt: calc(1pt * var(--k));
+  width: var(--w);
+  height: var(--h);
+  padding: calc(14 * var(--mm));
+  background: #fff;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, .25);
+  color: #000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: calc(10 * var(--pt));
+  line-height: 1.3;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.s-head { display: flex; justify-content: space-between; gap: calc(8 * var(--mm)); padding-bottom: calc(4 * var(--mm)); border-bottom: 0.4mm solid #000; }
+.s-brand { display: flex; gap: calc(4 * var(--mm)); align-items: center; min-width: 0; }
+.s-logo { max-width: calc(24 * var(--mm)); max-height: calc(20 * var(--mm)); object-fit: contain; }
+.s-company { font-size: calc(13 * var(--pt)); font-weight: 700; margin-bottom: calc(0.8 * var(--mm)); }
+.s-address { font-size: calc(8.5 * var(--pt)); line-height: 1.4; white-space: pre-line; }
+.s-doc { text-align: right; flex-shrink: 0; }
+.s-title { font-size: calc(15 * var(--pt)); font-weight: 700; margin-bottom: calc(2 * var(--mm)); }
+.s-doc table { margin-left: auto; font-size: calc(9.5 * var(--pt)); border-collapse: collapse; }
+.s-doc td { padding: calc(0.8 * var(--mm)) 0 calc(0.8 * var(--mm)) calc(2 * var(--mm)); text-align: left; }
+.s-doc td:first-child { padding-left: 0; padding-right: calc(3 * var(--mm)); }
+
+/* alamat kavling: titik fokus halaman */
+.s-lot {
+  display: flex; justify-content: space-between; align-items: center; gap: calc(6 * var(--mm));
+  margin: calc(5 * var(--mm)) 0; padding: calc(3 * var(--mm)) calc(5 * var(--mm));
+  border: 0.6mm solid #000;
+}
+.s-lot .lbl { font-size: calc(8.5 * var(--pt)); }
+.s-lot .addr { font-size: calc(20 * var(--pt)); font-weight: 700; line-height: 1.1; }
+.s-lot .area { text-align: right; }
+.s-lot .area b { display: block; font-size: calc(15 * var(--pt)); }
+
+.s-info { width: 100%; border-collapse: collapse; margin-bottom: calc(4 * var(--mm)); }
+.s-info td { padding: calc(1.1 * var(--mm)) 0; vertical-align: bottom; }
+.s-info td:first-child { width: calc(40 * var(--mm)); }
+.s-info td:nth-child(2) { width: calc(4 * var(--mm)); }
+.s-info .val { border-bottom: 0.15mm dotted #000; min-height: 1.3em; }
+
+.s-sec { font-weight: 700; margin: calc(2 * var(--mm)) 0 calc(1.5 * var(--mm)); }
+
+/* ketentuan: teks bebas, tiap baris satu butir */
+.s-terms { margin: 0; padding-left: calc(6 * var(--mm)); font-size: calc(10.5 * var(--pt)); line-height: 1.55; }
+.s-terms li { margin-bottom: calc(1.6 * var(--mm)); padding-left: calc(1 * var(--mm)); }
+.s-terms.plain { list-style: none; padding-left: 0; }
+.s-terms.plain li { padding-left: 0; }
+.wl { height: calc(8 * var(--mm)); border-bottom: 0.15mm dotted #000; }
+
+.s-note { margin-top: calc(4 * var(--mm)); line-height: 1.4; white-space: pre-line; }
+.s-note b { display: block; margin-bottom: calc(1 * var(--mm)); }
+
+/* tanda tangan mengikuti isi di atasnya, tidak didorong ke dasar kertas */
+.s-sign { margin-top: calc(14 * var(--mm)); display: grid; gap: calc(8 * var(--mm)); text-align: center; }
+.s-sign.cols-2 { grid-template-columns: 1fr 1fr; }
+.s-sign.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.s-sign .space { height: calc(24 * var(--mm)); }
+.s-sign .line { border-top: 0.3mm solid #000; padding-top: calc(1.2 * var(--mm)); min-height: calc(5 * var(--mm)); font-weight: 600; margin: 0 calc(3 * var(--mm)); }
+
+/* ================= LAYAR SEMPIT (HP / tablet) ================= */
+@media (max-width: 900px) {
+  .app { flex-direction: column; }
+  .panel { width: 100%; height: auto; position: static; overflow: visible; border-right: 0; border-bottom: 1px solid #d5d5dc; }
+  .preview { padding: 16px 8px; }
+  .actions button, button.primary { min-height: 44px; }
+}
+
+/* ================= PRINT ================= */
+/* size: auto = kertas dan orientasi dipilih di dialog print */
+@page { size: auto; margin: 0; }
+@media print {
+  html, body { background: none; height: auto; margin: 0; }
+  .no-print { display: none !important; }
+  .app { display: block; min-height: 0; }
+  .preview { padding: 0; overflow: visible; }
+  #zoomBox { display: block; zoom: 1 !important; }
+  #sheets { display: block; }
+  .sheet {
+    box-shadow: none;
+    margin: 0;
+    /* 0.5mm lebih pendek dari halaman supaya tidak memicu halaman kosong tambahan */
+    height: calc(var(--h) - 0.5mm);
+    break-after: page;
+  }
+  .sheet:last-child { break-after: auto; }
+}

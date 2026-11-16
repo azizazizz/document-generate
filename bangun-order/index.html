@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Generator Order Bangun</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- ============ FORM ============ -->
+    <aside class="panel no-print">
+      <a class="back" href="../index.html">← Kembali ke menu</a>
+      <h1>Generator Order Bangun</h1>
+      <p class="hint">Pilih kavling sesuai blok plan, isi data, lalu cetak satu kavling, satu blok, atau semua kavling sekaligus. Tiap alamat dicetak di halaman sendiri.</p>
+
+      <fieldset>
+        <legend>Kavling (sesuai blok plan)</legend>
+        <label>Cetak untuk
+          <select data-key="scope">
+            <option value="one">Satu kavling</option>
+            <option value="block">Semua kavling dalam satu blok</option>
+            <option value="all">Semua kavling (46 alamat)</option>
+          </select>
+        </label>
+        <div class="row">
+          <label id="blockBox">Blok
+            <select data-key="block" id="blockSel"></select>
+          </label>
+          <label id="lotBox">No. kavling
+            <select data-key="lot" id="lotSel"></select>
+          </label>
+        </div>
+        <p class="hint small" id="scopeInfo"></p>
+        <div class="row">
+          <label>Desa
+            <input data-key="desa" type="text">
+          </label>
+          <label>Kecamatan
+            <input data-key="kec" type="text">
+          </label>
+        </div>
+        <label>Kabupaten
+          <input data-key="kab" type="text">
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Kop / Pengembang</legend>
+        <label>Logo
+          <input type="file" id="logoFile" accept="image/*">
+        </label>
+        <button type="button" id="removeLogo" class="link">Hapus logo</button>
+        <label>Nama pengembang
+          <input data-key="company" type="text" placeholder="Nama perusahaan pengembang">
+        </label>
+        <label>Alamat / kontak
+          <textarea data-key="address" rows="2"></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Dokumen</legend>
+        <label>Judul dokumen
+          <input data-key="title" type="text">
+        </label>
+        <div class="row">
+          <label>Awalan nomor order
+            <input data-key="prefix" type="text">
+          </label>
+          <label>Tanggal
+            <input data-key="date" type="date">
+          </label>
+        </div>
+        <p class="hint small" id="noExample"></p>
+        <label>Nama proyek / perumahan
+          <input data-key="project" type="text">
+        </label>
+        <label>Tipe bangunan
+          <input data-key="buildType" type="text" placeholder="mis. tipe dan luas bangunan">
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Pelaksana &amp; jadwal</legend>
+        <label>Nama pelaksana / mandor
+          <input data-key="contractor" type="text">
+        </label>
+        <div class="row">
+          <label>Mulai kerja
+            <input data-key="startDate" type="date">
+          </label>
+          <label>Durasi (hari)
+            <input data-key="duration" type="number" min="0" step="1">
+          </label>
+        </div>
+        <label>Nilai order (Rp)
+          <input data-key="value" type="text" inputmode="numeric" autocomplete="off" id="valueInput" placeholder="kosongkan untuk ditulis tangan">
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Ketentuan</legend>
+        <label>Judul bagian
+          <input data-key="termsTitle" type="text" placeholder="kosongkan untuk tanpa judul">
+        </label>
+        <label>Isi ketentuan
+          <textarea data-key="terms" rows="9"></textarea>
+        </label>
+        <label class="check"><input data-key="termsNumbered" type="checkbox"> Beri nomor otomatis tiap baris</label>
+        <p class="hint small">Tulis satu ketentuan per baris. Kalimat awal hanya contoh umum, ganti sesuai kesepakatanmu. Kalau dikosongkan, dicetak garis tulis untuk ditulis tangan.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Catatan &amp; tanda tangan</legend>
+        <label>Catatan
+          <textarea data-key="note" rows="2"></textarea>
+        </label>
+        <div class="row">
+          <label>Kolom 1
+            <input data-key="giverLabel" type="text">
+          </label>
+          <label>Nama
+            <input data-key="giver" type="text" placeholder="(kosongkan jika tanda tangan basah)">
+          </label>
+        </div>
+        <div class="row">
+          <label>Kolom 2
+            <input data-key="doerLabel" type="text">
+          </label>
+          <label>Nama
+            <input data-key="doer" type="text" placeholder="(kosongkan jika tanda tangan basah)">
+          </label>
+        </div>
+        <label class="check"><input data-key="showKnow" type="checkbox"> Tampilkan kolom ke-3</label>
+        <div class="row">
+          <label>Kolom 3
+            <input data-key="knowLabel" type="text">
+          </label>
+          <label>Nama
+            <input data-key="know" type="text" placeholder="(kosongkan jika tanda tangan basah)">
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Kertas</legend>
+        <label>Ukuran kertas
+          <select data-key="size">
+            <option value="a4">A4 (210 × 297 mm)</option>
+            <option value="a5">A5 (148 × 210 mm)</option>
+          </select>
+        </label>
+        <p class="hint small">Hanya tinta hitam yang tercetak.</p>
+      </fieldset>
+
+      <p class="hint small" id="printHint"></p>
+      <div class="actions">
+        <button type="button" id="printBtn" class="primary">Cetak</button>
+        <button type="button" id="newBtn">Data baru</button>
+      </div>
+    </aside>
+
+    <!-- ============ PREVIEW ============ -->
+    <main class="preview" id="previewArea">
+      <div id="overflowWarn" class="warn no-print" hidden>Isi melebihi 1 halaman. Persingkat ketentuan atau catatan, atau pilih kertas A4.</div>
+      <div id="zoomBox">
+        <div id="sheets"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

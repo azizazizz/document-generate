@@ -6,6 +6,7 @@ Kumpulan website sederhana (HTML + CSS + JavaScript murni, tanpa library dan tan
 |---|---|
 | [invoice/](invoice/) | Generator Purchase Order / Invoice A5 & A4 |
 | [Slip Gaji Generator/](Slip%20Gaji%20Generator/) | Generator slip gaji A4 dan NCR 215 × 137 mm |
+| [bangun-order/](bangun-order/) | Generator order pembangunan per kavling (46 alamat sesuai blok plan Jayasampurna), A4 dan A5 |
 
 Menambah aplikasi baru (misalnya `slip-gaji/`): buat folder sendiri berisi `index.html`, `css/`, `js/`, lalu tambahkan satu baris tautan di [index.html](index.html) pada root.
 
@@ -21,9 +22,13 @@ Menambah aplikasi baru (misalnya `slip-gaji/`): buat folder sendiri berisi `inde
 │   ├── README.md
 │   ├── css/style.css
 │   └── js/script.js
-└── Slip Gaji Generator/
+├── Slip Gaji Generator/
+│   ├── index.html
+│   ├── style.css
+│   ├── app.js
+│   └── data/           # file .json hasil "Simpan Data", berisi data gaji asli
+└── bangun-order/
     ├── index.html
-    ├── style.css
-    ├── app.js
-    └── data/           # file .json hasil "Simpan Data", berisi data gaji asli
+    ├── css/style.css
+    └── js/script.js    # daftar kavling blok plan ada di konstanta BLOCKS
 ```
