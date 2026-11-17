@@ -71,6 +71,7 @@ button.primary:hover { background: #333; }
 button.link { border: 0; background: none; color: #111; text-decoration: underline; padding: 4px 0; font-size: 12px; }
 .actions { display: flex; gap: 8px; }
 .actions .primary { flex: 1; }
+.actions.spaced { margin-top: 10px; }
 
 /* ================= PREVIEW ================= */
 .preview { flex: 1; padding: 24px 12px; overflow: auto; }
@@ -145,6 +146,8 @@ button.link { border: 0; background: none; color: #111; text-decoration: underli
 .s-terms.plain { list-style: none; padding-left: 0; }
 .s-terms.plain li { padding-left: 0; }
 .wl { height: calc(8 * var(--mm)); border-bottom: 0.15mm dotted #000; }
+.s-lot .fill { min-width: calc(20 * var(--mm)); height: 1em; }
+.fill { display: inline-block; min-width: calc(36 * var(--mm)); height: 1.2em; vertical-align: bottom; border-bottom: 0.15mm dotted #000; }
 
 .s-note { margin-top: calc(4 * var(--mm)); line-height: 1.4; white-space: pre-line; }
 .s-note b { display: block; margin-bottom: calc(1 * var(--mm)); }

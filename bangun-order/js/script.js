@@ -60,7 +60,25 @@ const defaults = () => ({
   knowLabel: "Mengetahui,",
   know: "",
   size: "a4",
+  blankKop: false,
+  blankLot: false,
+  blankArea: false,
+  blankNo: false,
+  blankDate: false,
+  blankProject: false,
+  blankLocation: false,
+  blankType: false,
+  blankContractor: false,
+  blankSchedule: false,
+  blankValue: false,
+  blankTerms: false,
+  blankNote: false,
+  blankSigners: false,
 });
+
+/* isian yang bisa dicetak kosong (garis tulis) untuk diisi pulpen */
+const BLANK_KEYS = ["blankKop", "blankLot", "blankArea", "blankNo", "blankDate", "blankProject", "blankLocation", "blankType",
+  "blankContractor", "blankSchedule", "blankValue", "blankTerms", "blankNote", "blankSigners"];
 
 let state = load();
 
@@ -161,6 +179,14 @@ function bindFields() {
     render();
   });
 
+  const setAllBlank = (value) => {
+    BLANK_KEYS.forEach((k) => { state[k] = value; });
+    syncFormFromState();
+    render();
+  };
+  $("#blankAll").addEventListener("click", () => setAllBlank(true));
+  $("#blankNone").addEventListener("click", () => setAllBlank(false));
+
   $("#printBtn").addEventListener("click", () => window.print());
 
   $("#newBtn").addEventListener("click", () => {
@@ -190,11 +216,13 @@ function formatMoneyInput(el) {
 function sheetHTML(k, d) {
   // tiap baris di kotak Ketentuan menjadi satu butir; kalau kosong, dicetak garis tulis untuk tulisan tangan
   const lines = state.terms.split("\n").map((l) => l.trim()).filter(Boolean);
-  const termsHTML = lines.length
+  const termsHTML = lines.length && !state.blankTerms
     ? `<${state.termsNumbered ? "ol" : "ul"} class="s-terms${state.termsNumbered ? "" : " plain"}">${lines.map((l) => `<li>${esc(l)}</li>`).join("")}</${state.termsNumbered ? "ol" : "ul"}>`
     : '<div class="wl"></div>'.repeat(state.size === "a5" ? 6 : 10);
 
-  const val = (text) => `<div class="val">${text ? esc(text) : "&nbsp;"}</div>`;
+  // isian yang dikosongkan dicetak sebagai garis titik-titik
+  const val = (text, blank) => `<div class="val">${!blank && text ? esc(text) : "&nbsp;"}</div>`;
+  const fill = '<span class="fill"></span>';
   const location = [
     state.desa && `Desa ${state.desa}`,
     state.kec && `Kec. ${state.kec}`,
@@ -203,12 +231,12 @@ function sheetHTML(k, d) {
   const duration = state.duration ? `${esc(state.duration)} hari` : "";
   const start = formatDate(state.startDate);
   const info = [
-    ["Proyek / Perumahan", val(state.project)],
-    ["Lokasi", val(location)],
-    ["Tipe bangunan", val(state.buildType)],
-    ["Pelaksana / Mandor", val(state.contractor)],
-    ["Mulai kerja / Durasi", val([start, duration].filter(Boolean).join(" / "))],
-    ["Nilai order", val(state.value ? "Rp " + num(state.value) : "")],
+    ["Proyek / Perumahan", val(state.project, state.blankProject)],
+    ["Lokasi", val(location, state.blankLocation)],
+    ["Tipe bangunan", val(state.buildType, state.blankType)],
+    ["Pelaksana / Mandor", val(state.contractor, state.blankContractor)],
+    ["Mulai kerja / Durasi", val([start, duration].filter(Boolean).join(" / "), state.blankSchedule)],
+    ["Nilai order", val(state.value ? "Rp " + num(state.value) : "", state.blankValue)],
   ].map(([label, v]) => `<tr><td>${label}</td><td>:</td><td>${v}</td></tr>`).join("");
 
   const cols = state.showKnow ? 3 : 2;
@@ -223,17 +251,17 @@ function sheetHTML(k, d) {
   <section class="sheet" style="--w:${d.w}mm;--h:${d.h}mm;--k:${d.k}">
     <header class="s-head">
       <div class="s-brand">
-        ${state.logo ? `<img class="s-logo" src="${state.logo}" alt="Logo">` : ""}
+        ${state.logo && !state.blankKop ? `<img class="s-logo" src="${state.logo}" alt="Logo">` : ""}
         <div>
-          <div class="s-company">${esc(state.company)}</div>
-          <div class="s-address">${esc(state.address)}</div>
+          <div class="s-company">${state.blankKop ? "" : esc(state.company)}</div>
+          <div class="s-address">${state.blankKop ? "" : esc(state.address)}</div>
         </div>
       </div>
       <div class="s-doc">
         <div class="s-title">${esc(state.title)}</div>
         <table>
-          <tr><td>No.</td><td>: ${esc(orderNo(k))}</td></tr>
-          <tr><td>Tanggal</td><td>: ${esc(formatDate(state.date))}</td></tr>
+          <tr><td>No.</td><td>: ${state.blankNo ? fill : esc(orderNo(k))}</td></tr>
+          <tr><td>Tanggal</td><td>: ${state.blankDate ? fill : esc(formatDate(state.date))}</td></tr>
         </table>
       </div>
     </header>
@@ -241,11 +269,11 @@ function sheetHTML(k, d) {
     <div class="s-lot">
       <div>
         <div class="lbl">Alamat kavling</div>
-        <div class="addr">Blok ${esc(k.block)} No. ${esc(k.no)}</div>
+        <div class="addr">${state.blankLot ? `Blok ${fill} No. ${fill}` : `Blok ${esc(k.block)} No. ${esc(k.no)}`}</div>
       </div>
       <div class="area">
         <div class="lbl">Luas tanah</div>
-        <b>${k.area} m²</b>
+        <b>${state.blankArea ? `${fill} m²` : `${k.area} m²`}</b>
       </div>
     </div>
 
@@ -254,12 +282,14 @@ function sheetHTML(k, d) {
     ${state.termsTitle.trim() ? `<div class="s-sec">${esc(state.termsTitle)}</div>` : ""}
     ${termsHTML}
 
-    ${state.note ? `<div class="s-note"><b>Catatan:</b>${esc(state.note)}</div>` : ""}
+    ${state.blankNote
+      ? `<div class="s-note"><b>Catatan:</b>${'<div class="wl"></div>'.repeat(3)}</div>`
+      : state.note ? `<div class="s-note"><b>Catatan:</b>${esc(state.note)}</div>` : ""}
 
     <footer class="s-sign cols-${cols}">
-      ${sign(state.giverLabel, state.giver)}
-      ${sign(state.doerLabel, state.doer)}
-      ${state.showKnow ? sign(state.knowLabel, state.know) : ""}
+      ${sign(state.giverLabel, state.blankSigners ? "" : state.giver)}
+      ${sign(state.doerLabel, state.blankSigners ? "" : state.doer)}
+      ${state.showKnow ? sign(state.knowLabel, state.blankSigners ? "" : state.know) : ""}
     </footer>
   </section>`;
 }
